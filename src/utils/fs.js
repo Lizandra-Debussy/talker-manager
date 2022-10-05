@@ -11,4 +11,16 @@ const registeredPerson = async () => {
   } 
 };
 
-module.exports = registeredPerson;
+const writeFilePerson = async (people) => {
+  try {
+    const data = await fs.writeFile(path, JSON.stringify(people));
+    return data;
+  } catch (err) {
+    console.log(err);
+  } 
+};
+
+module.exports = {
+  registeredPerson,
+  writeFilePerson,
+};

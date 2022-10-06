@@ -34,19 +34,41 @@ router.post('/',
   watchedAtVatlidation,
   rateValidate,
   async (req, res) => {
-  const talkers = req.body;
+  const talker = req.body;
   const response = await registeredPerson();
 
   const addId = response.length + 1;
-  const newTalker = { id: addId, ...talkers };
+  const newTalker = { id: addId, ...talker };
   
   response.push(newTalker);
 
   await writeFilePerson(response);
 
-  if (talkers) {
+  if (talker) {
     return res.status(201).json(newTalker);
   }
+});
+
+router.put('/:id',
+  tokenValidate,
+  nameValidate,
+  ageValidate,
+  talkValidate,
+  watchedAtVatlidation,
+  rateValidate,
+  async (req, res) => {
+    const id = Number(req.params.id);
+    const response = await registeredPerson();
+    const findIdTalker = response.find((e) => e.id === id);
+    
+    if (findIdTalker) {
+    const index = response.indexOf(findIdTalker);
+    const updateTalker = { id, ...req.body };
+    response.splice(index, 1, updateTalker);
+
+    await writeFilePerson(response);
+    return res.status(200).json(updateTalker);
+    }
 });
 
 module.exports = router;

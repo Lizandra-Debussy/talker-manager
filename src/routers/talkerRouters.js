@@ -18,11 +18,11 @@ router.get('/', async (_req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-    const response = await registeredPerson();
-    const talkerId = response.find(({ id }) => id === Number(req.params.id));
-    if (talkerId) {
-      return res.status(200).json(talkerId);
-    } 
+  const response = await registeredPerson();
+  const talkerId = response.find(({ id }) => id === Number(req.params.id));
+  if (talkerId) {
+    return res.status(200).json(talkerId);
+  } 
     return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
 });
 
@@ -57,18 +57,33 @@ router.put('/:id',
   watchedAtVatlidation,
   rateValidate,
   async (req, res) => {
-    const id = Number(req.params.id);
-    const response = await registeredPerson();
-    const findIdTalker = response.find((e) => e.id === id);
+  const id = Number(req.params.id);
+  const response = await registeredPerson();
+  const findIdTalker = response.find((e) => e.id === id);
     
-    if (findIdTalker) {
-    const index = response.indexOf(findIdTalker);
-    const updateTalker = { id, ...req.body };
-    response.splice(index, 1, updateTalker);
+  if (findIdTalker) {
+  const index = response.indexOf(findIdTalker);
+  const updateTalker = { id, ...req.body };
+  response.splice(index, 1, updateTalker);
 
-    await writeFilePerson(response);
-    return res.status(200).json(updateTalker);
-    }
+  await writeFilePerson(response);
+  res.status(200).json(updateTalker);
+  }
+});
+
+router.delete('/:id',
+  tokenValidate,
+  async (req, res) => {
+  const id = Number(req.params.id);
+  const response = await registeredPerson();
+  const findIdTalker = response.find((e) => e.id === id);
+
+  if (findIdTalker) {
+  const index = response.indexOf(findIdTalker);
+  response.splice(index, 1);
+  await writeFilePerson(response);
+  res.status(204).json();
+  }
 });
 
 module.exports = router;

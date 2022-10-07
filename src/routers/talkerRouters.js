@@ -17,6 +17,17 @@ router.get('/', async (_req, res) => {
     return [];
 });
 
+router.get('/search', tokenValidate, async (req, res) => {
+  const { q } = req.query;
+  const response = await registeredPerson();
+  const findTalker = response.filter((e) => e.name.includes(q));
+
+  if (q) {
+    return res.status(200).json(findTalker);
+  } 
+    return res.status(200).json([]);
+});
+
 router.get('/:id', async (req, res) => {
   const response = await registeredPerson();
   const talkerId = response.find(({ id }) => id === Number(req.params.id));
